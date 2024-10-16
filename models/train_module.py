@@ -50,9 +50,9 @@ class TrainModule:
 
         self.early_stop = EarlyStopper(patience=self.config["train"]["patience"])
         self.optimizer = self.configure_optimizers()
-        # if self.config["device"] != "cpu":
-        #     #self.scaler = torch.cuda.amp.GradScaler(enabled=self.config["train"]["mixed_precision"])
-        #     self.scaler = torch.amp.GradScaler('cuda', enabled=self.config["train"]["mixed_precision"])
+        if self.config["device"] != "cpu" and self.config["device"] != "mps":
+            #self.scaler = torch.cuda.amp.GradScaler(enabled=self.config["train"]["mixed_precision"])
+            self.scaler = torch.amp.GradScaler('cuda', enabled=self.config["train"]["mixed_precision"])
 
     def pipeline(self) -> None:
         self.config["val"]["output_dir"] = dir_checker(self.config["val"]["output_dir"])
@@ -164,9 +164,18 @@ class TrainModule:
         self.pbar.set_postfix({k: self.postfix[k] for k in self.postfix.keys() & {"train_loss_step", "mr1", "mAP"}})
 
     def training_step(self, batch: BatchDict) -> Dict[str, float]:
-        with torch.autocast(
-            device_type=self.config["device"].split(":")[0], enabled=self.config["train"]["mixed_precision"]
-        ):
+        if self.config["device"] != "mps":
+            with torch.autocast(
+                device_type=self.config["device"].split(":")[0], enabled=self.config["train"]["mixed_precision"]
+            ):
+                anchor = self.model.forward(batch["anchor"].to(self.config["device"]))
+                positive = self.model.forward(batch["positive"].to(self.config["device"]))
+                negative = self.model.forward(batch["negative"].to(self.config["device"]))
+                l1 = self.triplet_loss(anchor["f_t"], positive["f_t"], negative["f_t"])
+                labels = nn.functional.one_hot(batch["anchor_label"].long(), num_classes=self.num_classes)
+                l2 = self.cls_loss(anchor["cls"], labels.float().to(self.config["device"]))
+                loss = l1 + l2
+        else:
             anchor = self.model.forward(batch["anchor"].to(self.config["device"]))
             positive = self.model.forward(batch["positive"].to(self.config["device"]))
             negative = self.model.forward(batch["negative"].to(self.config["device"]))

@@ -14,7 +14,7 @@ train:
   smooth_factor: 0.1
   dropout: 0.1
   model_ckpt: null
-  batch_size: 400
+  batch_size: 128
   num_workers: 0
   shuffle: True
   drop_last: True
@@ -27,7 +27,7 @@ val:
   dataset_path: "/content/dataset/train/"
   save_val_outputs: True
   max_seq_len: -1
-  batch_size: 400
+  batch_size: 128
   num_workers: 0
   shuffle: False
   drop_last: False

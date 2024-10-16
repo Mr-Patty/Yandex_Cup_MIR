@@ -3,7 +3,7 @@ file_extension: "npy"
 save_model_path: "models"
 debug: True
 progress_bar: True
-device: "cpu"
+device: "mps"
 num_channels: 1
 
 train:
@@ -14,7 +14,7 @@ train:
   smooth_factor: 0.1
   dropout: 0.1
   model_ckpt: null
-  batch_size: 400
+  batch_size: 64
   num_workers: 0
   shuffle: True
   drop_last: True
@@ -27,7 +27,7 @@ val:
   dataset_path: "/Users/olegshevchenko/Education/covers_detection_contest/dataset/train/"
   save_val_outputs: True
   max_seq_len: -1
-  batch_size: 400
+  batch_size: 32
   num_workers: 0
   shuffle: False
   drop_last: False

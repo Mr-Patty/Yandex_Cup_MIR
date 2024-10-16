@@ -1,13 +1,13 @@
-data_path: "/Users/olegshevchenko/Education/covers_detection_contest/dataset/"
+data_path: "/content/dataset/"
 file_extension: "npy"
 save_model_path: "models"
 debug: True
 progress_bar: True
-device: "cpu"
+device: "cuda:0"
 num_channels: 1
 
 train:
-  dataset_path: "/Users/olegshevchenko/Education/covers_detection_contest/dataset/train/"
+  dataset_path: "/content/dataset/train/"
   mixed_precision: False
   num_classes: 39535
   triplet_margin: 0.3
@@ -24,7 +24,7 @@ train:
   log_steps: 10
 
 val:
-  dataset_path: "/Users/olegshevchenko/Education/covers_detection_contest/dataset/train/"
+  dataset_path: "/content/dataset/train/"
   save_val_outputs: True
   max_seq_len: -1
   batch_size: 400
@@ -34,7 +34,7 @@ val:
   output_dir: "outputs_val"
 
 test:
-  dataset_path: "/Users/olegshevchenko/Education/covers_detection_contest/dataset/test/"
+  dataset_path: "/content/dataset/test/"
   save_test_outputs: True
   #model_ckpt: "/home/singleton/cover_detection_contest_2024/bytecover/outputs_val/run-0/model/best-model-epoch=6-max_secs=50.pt"
   model_ckpt: null
